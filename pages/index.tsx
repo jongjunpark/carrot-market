@@ -10,7 +10,7 @@ import { Product } from "@prisma/client";
 interface Count {
   favs: number;
 }
-interface ProductWithHearts extends Product {
+export interface ProductWithHearts extends Product {
   _count: Count;
 }
 interface ProductResponse {
@@ -33,7 +33,6 @@ const Home: NextPage = () => {
             key={product.id}
             title={product.name}
             price={product.price}
-            comments={1}
             hearts={product._count.favs}
           />
         ))}
