@@ -6,6 +6,7 @@ import Input from "@components/input";
 import useMutation from "@libs/client/useMutation";
 import { cls } from "@libs/client/utils";
 import { useRouter } from "next/router";
+import { Token } from "@prisma/client";
 
 interface EnterForm {
   email?: string;
@@ -17,6 +18,7 @@ interface TokenForm {
 }
 interface MutationResult {
   ok: boolean;
+  token: Token;
 }
 
 const Enter: NextPage = () => {
@@ -47,6 +49,10 @@ const Enter: NextPage = () => {
     tokenData?.ok && router.push("/");
   }, [tokenData, router]);
 
+  useEffect(() => {
+    data?.ok && console.log(data, "token");
+  }, [data]);
+
   return (
     <div className="mt-16 px-4">
       <h3 className="text-3xl font-bold text-center">Enter to Carrot</h3>
@@ -61,6 +67,7 @@ const Enter: NextPage = () => {
               name="token"
               label="Confirmation Token"
               type="number"
+              value={data?.token?.payload}
             />
             <Button text={tokenLoading ? "Loading" : "Confirm Token"} />
           </form>

@@ -7,30 +7,30 @@ async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>
 ) {
-  const { token } = req.body;
-  const foundToken = await client.token.findUnique({
-    where: {
-      payload: token,
+  const {
+    query: { id },
+    session: { user },
+  } = req;
+  const chat = await client.chat.create({
+    data: {
+      user: {
+        connect: {
+          id: user?.id,
+        },
+      },
+      product: {
+        connect: {
+          id: +id.toString(),
+        },
+      },
     },
-    include: { user: true },
   });
-  if (!foundToken) return res.status(404).end();
-  req.session.user = {
-    id: foundToken.userId,
-  };
-  await req.session.save();
-  await client.token.deleteMany({
-    where: {
-      userId: foundToken.userId,
-    },
-  });
-  res.json({ ok: true });
+  res.json({ ok: true, chat });
 }
 
 export default withApiSession(
   WithHandler({
     methods: ["POST"],
     handler,
-    isPrivate: false,
   })
 );

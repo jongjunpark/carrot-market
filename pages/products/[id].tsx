@@ -4,10 +4,12 @@ import Layout from "@components/layout";
 import { useRouter } from "next/router";
 import useSWR, { useSWRConfig } from "swr";
 import Link from "next/link";
-import { Product, User } from "@prisma/client";
+import { Chat, Product, User } from "@prisma/client";
 import useMutation from "@libs/client/useMutation";
 import { cls } from "@libs/client/utils";
 import useUser from "@libs/client/useUser";
+import { useForm } from "react-hook-form";
+import { useEffect } from "react";
 
 interface ProductWithUser extends Product {
   user: User;
@@ -20,19 +22,37 @@ interface ItemDetailResponse {
   isLiked: boolean;
 }
 
+interface ChatResponse {
+  ok: boolean;
+  chat: Chat;
+}
+
 const ItemDetail: NextPage = () => {
   const { user, isLoading } = useUser();
   const { mutate } = useSWRConfig();
   const router = useRouter();
+  const { handleSubmit } = useForm();
   const { data, mutate: boundMutate } = useSWR<ItemDetailResponse>(
     router.query.id ? `/api/products/${router.query.id}` : null
   );
   const [toggleFav] = useMutation(`/api/products/${router.query.id}/fav`);
+  const [createChat, { data: chatData, loading: chatLoading }] =
+    useMutation<ChatResponse>(`/api/products/${router.query.id}/chat`);
   const onFavClick = () => {
     toggleFav({});
     if (!data) return;
     boundMutate({ ...data, isLiked: !data.isLiked }, false);
   };
+  const onValid = () => {
+    if (chatLoading) return;
+    createChat({});
+  };
+  useEffect(() => {
+    if (chatData && chatData.ok) {
+      router.push(`/chats/${chatData.chat.id}`);
+    }
+  }, [chatData]);
+
   return (
     <Layout canGoBack>
       <div className="px-4  py-4">
@@ -61,7 +81,12 @@ const ItemDetail: NextPage = () => {
             </span>
             <p className=" my-6 text-gray-700">{data?.product?.description}</p>
             <div className="flex items-center justify-between space-x-2">
-              <Button large text="Talk to seller" />
+              <form onSubmit={handleSubmit(onValid)} className="w-full">
+                <Button
+                  large
+                  text={chatLoading ? "Loading" : "Talk to seller"}
+                />
+              </form>
               <button
                 onClick={onFavClick}
                 className={cls(

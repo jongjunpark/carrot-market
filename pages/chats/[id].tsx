@@ -1,8 +1,25 @@
 import type { NextPage } from "next";
 import Layout from "@components/layout";
 import Message from "@components/message";
+import useSWR from "swr";
+import { useRouter } from "next/router";
+import { Chat, ChatMessage, User } from "@prisma/client";
+
+interface ChatWithMessage extends Chat {
+  chatMessages: ChatMessage[];
+  user: User;
+}
+
+interface ChatResponse {
+  ok: boolean;
+  chat: ChatWithMessage;
+}
 
 const ChatDetail: NextPage = () => {
+  const router = useRouter();
+  const { data } = useSWR<ChatResponse>(
+    router.query.id ? `/api/chats/${router.query.id}` : null
+  );
   return (
     <Layout canGoBack title="Steve">
       <div className="py-10 pb-16 px-4 space-y-4">
