@@ -62,7 +62,7 @@ const MiniProfile = () => {
   return (
     <div className="flex items-center mt-4 space-x-3">
       {user?.avatar ? (
-        <img src={``} className="w-16 h-16 bg-slate-500 rounded-full" /> //TODO
+        <img src={``} className="w-16 h-16 bg-slate-500 rounded-full" /> //TODO.
       ) : (
         <div className="w-16 h-16 bg-slate-500 rounded-full" />
       )}
