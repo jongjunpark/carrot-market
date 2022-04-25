@@ -9,7 +9,7 @@ interface LayoutProps {
   canGoBack?: boolean;
   hasTabBar?: boolean;
   children: React.ReactNode;
-  seoTitle: string;
+  [key: string]: any;
 }
 
 export default function Layout({
@@ -17,7 +17,7 @@ export default function Layout({
   canGoBack,
   hasTabBar,
   children,
-  seoTitle,
+  seoTitle = null,
 }: LayoutProps) {
   const router = useRouter();
   const onClick = () => {
