@@ -164,7 +164,11 @@ const Profile: NextPage = () => {
 
 const Page: NextPage = () => {
   return (
-    <SWRConfig>
+    <SWRConfig
+      value={{
+        suspense: true,
+      }}
+    >
       <Profile />
     </SWRConfig>
   );
