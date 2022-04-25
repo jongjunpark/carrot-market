@@ -18,7 +18,7 @@ interface PostsResponse {
   // ok: boolean;
   posts: PostWithUser[];
 }
-
+//
 const Community: NextPage<PostsResponse> = ({ posts }) => {
   // const { latitude, longitude } = useCoords();
   // const { data } = useSWR<PostsResponse>(
